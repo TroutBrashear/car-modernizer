@@ -5,7 +5,7 @@ import time
 
 
 simMode = platform.system() == 'Windows'
-connection = null
+connection = None
 
 
 def speechFunction (text): 
@@ -26,7 +26,7 @@ def speedCheck():
         speechFunction(response)
 
 def tempCheck():
-    if(simMod):
+    if(simMode):
         speechFunction("Temp Check")
     else:
         response = str(connection.query(obd.commands.OIL_TEMP))
