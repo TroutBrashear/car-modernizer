@@ -4,6 +4,10 @@ import obd
 import time
 
 
+simMode = platform.system() == 'Windows'
+connection = null
+
+
 def speechFunction (text): 
     try:
        engine = pyttsx3.init()
@@ -12,10 +16,21 @@ def speechFunction (text):
        engine.stop()
     except:
         print("speech failed")
+        
 
+def speedCheck():
+    if(simMode):
+        speechFunction("Speed Check")
+    else:
+        response = str(connection.query(obd.commands.SPEED))
+        speechFunction(response)
 
-simMode = platform.system() == 'Windows';
-
+def tempCheck():
+    if(simMod):
+        speechFunction("Temp Check")
+    else:
+        response = str(connection.query(obd.commands.OIL_TEMP))
+        speechFunction(response)
 
 if(simMode):
     speechFunction("Windows.") #debug statement
@@ -33,12 +48,14 @@ while(True):
     
     if(i % 60 == 0):
         print("temp")
-        speechFunction("Temp Check")
+        tempCheck()
+            
         
     
     if(i % 10 == 0):
         print("speed")
-        speechFunction("Speed Check")
+        speedCheck()
+            
     
     time.sleep(1)
     i += 1
