@@ -14,6 +14,18 @@ tempLog = []
 
 
 #function defs
+if(simMode):
+    import keyboard
+    
+    def summaryButtonPress():
+        return keyboard.is_pressed('space')
+else:
+    import RPi.GPIO as GPIO
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(18, GPIO.IN)
+    
+    def summaryButtonPress():
+        return GPIO.input(18)
 
 def speechFunction (text): 
     try:
@@ -95,11 +107,9 @@ while(True):
         print("speed")
         speedCheck()
        
-    #todo: tie this to user request (button) rather than time
-    if(i % 20 == 0):
+    if(summaryButtonPress()):
         print("summary")
         summarize()
-            
     
     time.sleep(1)
     i += 1
