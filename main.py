@@ -14,6 +14,7 @@ tempLog = []
 
 
 #function defs
+
 def speechFunction (text): 
     try:
        engine = pyttsx3.init()
@@ -31,8 +32,13 @@ def speedCheck():
         speechFunction(str(simSpeed) + " mph")
     else:
         response = connection.query(obd.commands.SPEED).value.to('mph')
-        speedLog.append(int(response.magnitude))
-        speechFunction(str(response))
+        if(response.is_null()):
+            speechFunction("no speed response")
+            return
+        speedValue = int(response.magnitude)
+        speedLog.append(speedValue)
+        if(speedValue > 80):
+            speechFunction(str(response))
 
 def tempCheck():
     if(simMode):
@@ -41,8 +47,13 @@ def tempCheck():
         speechFunction(str(simTemp) + " degrees")
     else:
         response = connection.query(obd.commands.COOLANT_TEMP).value
-        tempLog.append(int(response.magnitude))
-        speechFunction(str(response))
+        if(response.is_null()):
+            speechFunction("no temp response")
+            return
+        tempValue = int(response.magnitude)
+        tempLog.append(tempValue)
+        if(tempValue > 105):
+            speechFunction(str(response))
 
 def summarize():
     readout = "Trip Summary: "
