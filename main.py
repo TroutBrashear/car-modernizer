@@ -2,6 +2,7 @@ import pyttsx3
 import platform
 import obd
 import time
+import random
 
 
 #var defs
@@ -10,6 +11,7 @@ connection = None
 
 speedLog = []
 tempLog = []
+
 
 #function defs
 def speechFunction (text): 
@@ -24,7 +26,9 @@ def speechFunction (text):
 
 def speedCheck():
     if(simMode):
-        speechFunction("Speed Check")
+        simSpeed = random.randint(40, 70)
+        speedLog.append(simSpeed)
+        speechFunction(str(simSpeed) + " mph")
     else:
         response = connection.query(obd.commands.SPEED).value.to('mph')
         speedLog.append(int(response.magnitude))
@@ -32,22 +36,25 @@ def speedCheck():
 
 def tempCheck():
     if(simMode):
-        speechFunction("Temp Check")
+        simTemp = random.randint(85, 120)
+        tempLog.append(simTemp)
+        speechFunction(str(simTemp) + " degrees")
     else:
-        response = str(connection.query(obd.commands.COOLANT_TEMP).value)
+        response = connection.query(obd.commands.COOLANT_TEMP).value
         tempLog.append(int(response.magnitude))
-        speechFunction(response)
+        speechFunction(str(response))
 
 def summarize():
     readout = "Trip Summary: "
     #average out speed
     if(len(speedLog) > 0):
         averageSpeed = sum(speedLog) / len(speedLog)
-        readout += (f"Speed average is {averageSpeed}")
+        readout += f"Speed average is {averageSpeed}"
+        
     #average out coolant temp
     if(len(tempLog) > 0):
         averageTemp = sum(tempLog) / len(tempLog)
-        readout += (f"Temperature average is {averageTemp}")
+        readout += f"Temperature average is {averageTemp}"
     #speech
     speechFunction(readout)
 
@@ -67,19 +74,19 @@ i = 0
 
 while(True):
     
-    if(i % 60 == 0):
+    if(i % 10 == 0):
         print("temp")
         tempCheck()
             
         
     
-    if(i % 10 == 0):
+    if(i % 5 == 0):
         print("speed")
         speedCheck()
        
     #todo: tie this to user request (button) rather than time
-    if(i % 600 == 0):
-        print("summary)
+    if(i % 20 == 0):
+        print("summary")
         summarize()
             
     
